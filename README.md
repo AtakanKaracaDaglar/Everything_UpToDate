@@ -439,10 +439,10 @@ copies of the Software...
 
 *Full Stack Developer & Open Source Enthusiast*
 
-[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/KULLANICI_ADI)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/KULLANICI_ADI)
-[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/KULLANICI_ADI)
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:EMAIL@DOMAIN.com)
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/AtakanKaracaDaglar)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/atakan-karaca-daglar)
+[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/AtakanKaracaDaglar)
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:atakankaracadaglar@gmail.com)
 
 </div>
 
@@ -524,15 +524,15 @@ Copy-Item -Path $source -Destination $backup -Recurse
 
 <div align="center">
 
-![GitHub Stars](https://img.shields.io/github/stars/KULLANICI_ADI/everything-uptodate?style=for-the-badge&logo=github)
-![GitHub Forks](https://img.shields.io/github/forks/KULLANICI_ADI/everything-uptodate?style=for-the-badge&logo=github)
-![GitHub Issues](https://img.shields.io/github/issues/KULLANICI_ADI/everything-uptodate?style=for-the-badge&logo=github)
-![GitHub Pull Requests](https://img.shields.io/github/issues-pr/KULLANICI_ADI/everything-uptodate?style=for-the-badge&logo=github)
+![GitHub Stars](https://img.shields.io/github/stars/AtakanKaracaDaglar/everything-uptodate?style=for-the-badge&logo=github)
+![GitHub Forks](https://img.shields.io/github/forks/AtakanKaracaDaglar/everything-uptodate?style=for-the-badge&logo=github)
+![GitHub Issues](https://img.shields.io/github/issues/AtakanKaracaDaglar/everything-uptodate?style=for-the-badge&logo=github)
+![GitHub Pull Requests](https://img.shields.io/github/issues-pr/AtakanKaracaDaglar/everything-uptodate?style=for-the-badge&logo=github)
 
-![Downloads](https://img.shields.io/github/downloads/KULLANICI_ADI/everything-uptodate/total?style=for-the-badge&logo=download)
-![Code Size](https://img.shields.io/github/languages/code-size/KULLANICI_ADI/everything-uptodate?style=for-the-badge)
-![Last Commit](https://img.shields.io/github/last-commit/KULLANICI_ADI/everything-uptodate?style=for-the-badge&logo=git)
-![Contributors](https://img.shields.io/github/contributors/KULLANICI_ADI/everything-uptodate?style=for-the-badge&logo=github)
+![Downloads](https://img.shields.io/github/downloads/AtakanKaracaDaglar/everything-uptodate/total?style=for-the-badge&logo=download)
+![Code Size](https://img.shields.io/github/languages/code-size/AtakanKaracaDaglar/everything-uptodate?style=for-the-badge)
+![Last Commit](https://img.shields.io/github/last-commit/AtakanKaracaDaglar/everything-uptodate?style=for-the-badge&logo=git)
+![Contributors](https://img.shields.io/github/contributors/AtakanKaracaDaglar/everything-uptodate?style=for-the-badge&logo=github)
 
 </div>
 
@@ -542,15 +542,15 @@ Copy-Item -Path $source -Destination $backup -Recurse
 
 ## ⭐ Beğendiyseniz Yıldız Verin! ⭐
 
-**Made with ❤️ and ☕ by [SİZİN ADINIZ]**
+**Made with ❤️ and ☕ by Atakan Karaca Dağlar**
 
 *"Güncel kalmak hiç bu kadar kolay olmamıştı!"*
 
 ---
 
-[![View on GitHub](https://img.shields.io/badge/View%20on-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/KULLANICI_ADI/everything-uptodate)
-[![Download Latest](https://img.shields.io/badge/Download-Latest%20Release-blue?style=for-the-badge&logo=download&logoColor=white)](https://github.com/KULLANICI_ADI/everything-uptodate/releases)
-[![Read Docs](https://img.shields.io/badge/Read-Documentation-green?style=for-the-badge&logo=readthedocs&logoColor=white)](https://github.com/KULLANICI_ADI/everything-uptodate/wiki)
+[![View on GitHub](https://img.shields.io/badge/View%20on-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/AtakanKaracaDaglar/everything-uptodate)
+[![Download Latest](https://img.shields.io/badge/Download-Latest%20Release-blue?style=for-the-badge&logo=download&logoColor=white)](https://github.com/AtakanKaracaDaglar/everything-uptodate/releases)
+[![Read Docs](https://img.shields.io/badge/Read-Documentation-green?style=for-the-badge&logo=readthedocs&logoColor=white)](https://github.com/AtakanKaracaDaglar/everything-uptodate/wiki)
 [![Join Discord](https://img.shields.io/badge/Join-Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](#)
 
 </div>
