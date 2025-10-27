@@ -208,5 +208,13 @@ namespace Everything_UpToDate.Services
         {
             return Array.IndexOf(_settings.ExcludedApps, appId) >= 0;
         }
+
+        /// <summary>
+        /// Ayar dosyasý yolunu döndürür
+        /// </summary>
+        public string GetSettingsFilePath()
+        {
+            return _settingsPath;
+        }
     }
 }

@@ -234,5 +234,13 @@ namespace Everything_UpToDate.Services
                 throw new Exception($"Export failed: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Database dosya yolunu döndürür
+        /// </summary>
+        public string GetDatabasePath()
+        {
+            return _dbFile;
+        }
     }
 }

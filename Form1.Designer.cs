@@ -52,6 +52,7 @@
             this.btnToggleTheme = new System.Windows.Forms.Button();
             this.lblLastScan = new System.Windows.Forms.Label();
             this.btnViewHistory = new System.Windows.Forms.Button();
+            this.btnSettings = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listViewApps
@@ -97,8 +98,8 @@
             // 
             // columnSize
             // 
-            this.columnSize.Text = "Boyut";
-            this.columnSize.Width = 100;
+            this.columnSize.Text = "Kaynak";
+            this.columnSize.Width = 120;
             // 
             // btnRefresh
             // 
@@ -252,6 +253,20 @@
             this.btnViewHistory.UseVisualStyleBackColor = false;
             this.btnViewHistory.Click += new System.EventHandler(this.btnViewHistory_Click);
             // 
+            // btnSettings
+            // 
+            this.btnSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(90)))), ((int)(((byte)(180)))));
+            this.btnSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSettings.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnSettings.ForeColor = System.Drawing.Color.White;
+            this.btnSettings.Location = new System.Drawing.Point(580, 376);
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(120, 45);
+            this.btnSettings.TabIndex = 14;
+            this.btnSettings.Text = "⚙️ Ayarlar";
+            this.btnSettings.UseVisualStyleBackColor = false;
+            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -259,6 +274,7 @@
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(984, 641);
             this.Controls.Add(this.lblLastScan);
+            this.Controls.Add(this.btnSettings);
             this.Controls.Add(this.btnViewHistory);
             this.Controls.Add(this.btnToggleTheme);
             this.Controls.Add(this.lblSearch);
@@ -304,6 +320,7 @@
         private System.Windows.Forms.Button btnToggleTheme;
         private System.Windows.Forms.Label lblLastScan;
         private System.Windows.Forms.Button btnViewHistory;
+        private System.Windows.Forms.Button btnSettings;
     }
 }
 

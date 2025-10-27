@@ -54,6 +54,21 @@ namespace Everything_UpToDate
             this.FormClosing += Form1_FormClosing;
         }
 
+        private void btnSettings_Click(object sender, EventArgs e)
+        {
+            // Ayarlar DialogBox'ı
+            var settings = _settingsService.Settings;
+
+            var settingsForm = new SettingsDialog(_settingsService, _updateService, _startupService, _databaseService);
+            settingsForm.ShowDialog(this);
+
+            // Ayarlar kaydedildi notification
+            if (settingsForm.DialogResult == DialogResult.OK)
+            {
+                MessageBox.Show("Ayarlar kaydedildi!", "Başarılı", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
         private void BackgroundScanService_OnScanCompleted(object sender, int updateCount)
         {
             // UI thread'de çalıştır
@@ -383,7 +398,9 @@ namespace Everything_UpToDate
                 
                 string statusText = app.IsUpdateAvailable ? "Güncelleme Mevcut ⚠" : "Güncel ✓";
                 item.SubItems.Add(statusText);
-                item.SubItems.Add(app.IsUpdateAvailable ? app.GetUpdateSizeFormatted() : "-");
+                
+                // Kaynak bilgisini göster (sadece isim)
+                item.SubItems.Add(app.SourceName);
                 
                 item.Tag = app;
 
@@ -471,6 +488,13 @@ namespace Everything_UpToDate
             {
                 _isUpdating = true;
                 SetUIState(false);
+                
+                // Detay textbox'ını temizle
+                txtDetails.Clear();
+                txtDetails.AppendText($"═══════════════════════════════════════\r\n");
+                txtDetails.AppendText($"  GÜNCELLEME BAŞLADI\r\n");
+                txtDetails.AppendText($"  {applications.Count} uygulama güncellenecek\r\n");
+                txtDetails.AppendText($"═══════════════════════════════════════\r\n\r\n");
 
                 var progress = new Progress<UpdateProgress>(UpdateProgressHandler);
 
@@ -483,12 +507,16 @@ namespace Everything_UpToDate
                     await _updateService.UpdateMultipleApplicationsAsync(applications, progress);
                 }
 
-                // ListView'i güncelle
-                PopulateListView();
-                UpdateCountLabel();
+                txtDetails.AppendText($"\r\n═══════════════════════════════════════\r\n");
+                txtDetails.AppendText($"  TÜM GÜNCELLEMELER TAMAMLANDI ✓\r\n");
+                txtDetails.AppendText($"═══════════════════════════════════════\r\n");
+                txtDetails.AppendText($"\r\nYeniden taranıyor...\r\n");
+
+                // Güncelleme sonrası yeniden tarama yap
+                await RefreshApplicationsAsync();
 
                 MessageBox.Show(
-                    $"Güncelleme tamamlandı!\n\n{applications.Count} uygulama başarıyla güncellendi.",
+                    $"Güncelleme tamamlandı!\n\n{applications.Count} uygulama güncellendi.\n\nUygulama listesi yenilendi.",
                     "Başarılı",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
@@ -498,6 +526,7 @@ namespace Everything_UpToDate
             }
             catch (Exception ex)
             {
+                txtDetails.AppendText($"\r\n[HATA] {ex.Message}\r\n");
                 MessageBox.Show($"Güncelleme sırasında hata: {ex.Message}", "Hata", 
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 lblStatus.Text = "Güncelleme başarısız";
@@ -521,6 +550,14 @@ namespace Everything_UpToDate
 
             progressBar.Value = Math.Min(progress.ProgressPercentage, 100);
             lblStatus.Text = $"{progress.ApplicationName}: {progress.Message}";
+
+            // Detay textbox'ına da yaz
+            if (!string.IsNullOrWhiteSpace(progress.Message))
+            {
+                txtDetails.AppendText($"[{DateTime.Now:HH:mm:ss}] {progress.Message}\r\n");
+                txtDetails.SelectionStart = txtDetails.Text.Length;
+                txtDetails.ScrollToCaret();
+            }
 
             // Durum rengini ayarla (tema duyarlı)
             switch (progress.Status)
@@ -616,14 +653,15 @@ namespace Everything_UpToDate
                     txtDetails.Text = $"═══════════════════════════════════════════════════════════════\r\n" +
                                     $"  UYGULAMA BİLGİLERİ\r\n" +
                                     $"═══════════════════════════════════════════════════════════════\r\n\r\n" +
-                                    $"📦 Uygulama Adı      : {app.Name}\r\n\r\n" +
+                                    $"📦 Uygulama Adı      : {app.Name}\r\n" +
+                                    $"🔖 Paket ID          : {app.Id}\r\n\r\n" +
                                     $"📌 Mevcut Versiyon   : {app.CurrentVersion}\r\n" +
                                     $"🆕 Yeni Versiyon     : {app.LatestVersion}\r\n\r\n" +
+                                    $"Kaynak               : {app.SourceName}\r\n" +
                                     $"📁 Kurulum Yolu      : {app.InstallPath}\r\n\r\n" +
-                                    $"💾 Güncelleme Boyutu : {(app.IsUpdateAvailable ? app.GetUpdateSizeFormatted() : "Güncelleme Yok")}\r\n\r\n" +
                                     $"🔍 Son Kontrol       : {app.LastChecked:dd.MM.yyyy HH:mm:ss}\r\n\r\n" +
                                     $"───────────────────────────────────────────────────────────────\r\n" +
-                                    $"  GÜNCELLEME DETAYI\r\n" +
+                                    $"  AÇIKLAMA\r\n" +
                                     $"───────────────────────────────────────────────────────────────\r\n\r\n" +
                                     $"{app.Description}\r\n\r\n" +
                                     $"═══════════════════════════════════════════════════════════════";
