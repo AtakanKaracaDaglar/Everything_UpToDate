@@ -63,7 +63,6 @@
     <Compile Include="Services\IPackageManager.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\PackageManagers\ChocolateyPackageManager.cs" />
-    <Compile Include="Services\PackageManagers\MicrosoftStorePackageManager.cs" />
     <Compile Include="Services\PackageManagers\WinGetPackageManager.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\StartupService.cs" />

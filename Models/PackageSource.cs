@@ -16,11 +16,6 @@ namespace Everything_UpToDate.Models
         Chocolatey,
 
         /// <summary>
-        /// Microsoft Store (UWP Apps)
-        /// </summary>
-        MicrosoftStore,
-
-        /// <summary>
         /// Steam Gaming Platform
         /// </summary>
         Steam,

@@ -16,7 +16,6 @@ namespace Everything_UpToDate
         // Paket Yöneticileri
         private CheckBox chkWinGet;
         private CheckBox chkChocolatey;
-        private CheckBox chkMicrosoftStore;
 
         // Bildirimler
         private CheckBox chkShowNotifications;
@@ -51,108 +50,98 @@ namespace Everything_UpToDate
         {
             // Form ayarları
             this.Text = "Ayarlar";
-            this.Size = new Size(500, 520);
+            this.Size = new Size(500, 470); // Uygun yükseklik
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.StartPosition = FormStartPosition.CenterParent;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.BackColor = Color.White;
 
-            int yPos = 20;
+            int yPos = 15;
 
             // ===== PAKET YÖNETİCİLERİ =====
             var lblPackages = new Label
             {
                 Text = "PAKET YÖNETİCİLERİ",
                 Location = new Point(20, yPos),
-                Size = new Size(460, 25),
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                Size = new Size(460, 20),
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(0, 120, 215)
             };
             this.Controls.Add(lblPackages);
-            yPos += 30;
+            yPos += 25;
 
             chkWinGet = new CheckBox
             {
                 Text = "WinGet (Windows Package Manager)",
                 Location = new Point(40, yPos),
-                Size = new Size(420, 25),
-                Font = new Font("Segoe UI", 9.5F),
+                Size = new Size(420, 22),
+                Font = new Font("Segoe UI", 9F),
                 Checked = true
             };
             this.Controls.Add(chkWinGet);
-            yPos += 30;
+            yPos += 25;
 
             chkChocolatey = new CheckBox
             {
                 Text = "Chocolatey",
                 Location = new Point(40, yPos),
-                Size = new Size(420, 25),
-                Font = new Font("Segoe UI", 9.5F)
+                Size = new Size(420, 22),
+                Font = new Font("Segoe UI", 9F)
             };
             this.Controls.Add(chkChocolatey);
-            yPos += 30;
-
-            chkMicrosoftStore = new CheckBox
-            {
-                Text = "Microsoft Store (UWP Apps)",
-                Location = new Point(40, yPos),
-                Size = new Size(420, 25),
-                Font = new Font("Segoe UI", 9.5F)
-            };
-            this.Controls.Add(chkMicrosoftStore);
-            yPos += 40;
+            yPos += 32;
 
             // ===== BİLDİRİMLER =====
             var lblNotifications = new Label
             {
                 Text = "BİLDİRİMLER",
                 Location = new Point(20, yPos),
-                Size = new Size(460, 25),
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                Size = new Size(460, 20),
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(0, 120, 215)
             };
             this.Controls.Add(lblNotifications);
-            yPos += 30;
+            yPos += 25;
 
             chkShowNotifications = new CheckBox
             {
                 Text = "Bildirimleri Göster",
                 Location = new Point(40, yPos),
-                Size = new Size(420, 25),
-                Font = new Font("Segoe UI", 9.5F)
+                Size = new Size(420, 22),
+                Font = new Font("Segoe UI", 9F)
             };
             this.Controls.Add(chkShowNotifications);
-            yPos += 30;
+            yPos += 25;
 
             chkMinimizeToTray = new CheckBox
             {
                 Text = "X'e Basınca Sistem Tepsisine Küçült",
                 Location = new Point(40, yPos),
-                Size = new Size(420, 25),
-                Font = new Font("Segoe UI", 9.5F)
+                Size = new Size(420, 22),
+                Font = new Font("Segoe UI", 9F)
             };
             this.Controls.Add(chkMinimizeToTray);
-            yPos += 40;
+            yPos += 32;
 
             // ===== ARKA PLAN TARAMA =====
             var lblBackground = new Label
             {
                 Text = "ARKA PLAN TARAMA",
                 Location = new Point(20, yPos),
-                Size = new Size(460, 25),
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                Size = new Size(460, 20),
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(0, 120, 215)
             };
             this.Controls.Add(lblBackground);
-            yPos += 30;
+            yPos += 25;
 
             chkAutoScan = new CheckBox
             {
                 Text = "Otomatik Tarama Aktif",
                 Location = new Point(40, yPos),
-                Size = new Size(200, 25),
-                Font = new Font("Segoe UI", 9.5F)
+                Size = new Size(200, 22),
+                Font = new Font("Segoe UI", 9F)
             };
             this.Controls.Add(chkAutoScan);
 
@@ -160,61 +149,61 @@ namespace Everything_UpToDate
             {
                 Text = "Tarama Aralığı (saat):",
                 Location = new Point(250, yPos + 2),
-                Size = new Size(130, 20),
-                Font = new Font("Segoe UI", 9F)
+                Size = new Size(130, 18),
+                Font = new Font("Segoe UI", 8.5F)
             };
             this.Controls.Add(lblInterval);
 
             numScanInterval = new NumericUpDown
             {
                 Location = new Point(380, yPos),
-                Size = new Size(60, 25),
+                Size = new Size(60, 22),
                 Minimum = 1,
                 Maximum = 24,
                 Value = 6,
-                Font = new Font("Segoe UI", 9.5F)
+                Font = new Font("Segoe UI", 9F)
             };
             this.Controls.Add(numScanInterval);
-            yPos += 40;
+            yPos += 32;
 
             // ===== BAŞLANGIÇ =====
             var lblStartup = new Label
             {
                 Text = "BAŞLANGIÇ",
                 Location = new Point(20, yPos),
-                Size = new Size(460, 25),
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold),
+                Size = new Size(460, 20),
+                Font = new Font("Segoe UI", 10F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(0, 120, 215)
             };
             this.Controls.Add(lblStartup);
-            yPos += 30;
+            yPos += 25;
 
             chkStartWithWindows = new CheckBox
             {
                 Text = "Windows ile Başlat",
                 Location = new Point(40, yPos),
-                Size = new Size(420, 25),
-                Font = new Font("Segoe UI", 9.5F)
+                Size = new Size(420, 22),
+                Font = new Font("Segoe UI", 9F)
             };
             this.Controls.Add(chkStartWithWindows);
-            yPos += 30;
+            yPos += 25;
 
             chkStartMinimized = new CheckBox
             {
                 Text = "Küçültülmüş Başlat",
                 Location = new Point(40, yPos),
-                Size = new Size(420, 25),
-                Font = new Font("Segoe UI", 9.5F)
+                Size = new Size(420, 22),
+                Font = new Font("Segoe UI", 9F)
             };
             this.Controls.Add(chkStartMinimized);
-            yPos += 50;
+            yPos += 35;
 
             // ===== BUTONLAR =====
             btnOpenFolder = new Button
             {
                 Text = "Ayar Klasörünü Aç",
                 Location = new Point(20, yPos),
-                Size = new Size(150, 35),
+                Size = new Size(145, 32),
                 Font = new Font("Segoe UI", 9F),
                 BackColor = Color.FromArgb(100, 100, 100),
                 ForeColor = Color.White,
@@ -227,7 +216,7 @@ namespace Everything_UpToDate
             {
                 Text = "İptal",
                 Location = new Point(250, yPos),
-                Size = new Size(100, 35),
+                Size = new Size(95, 32),
                 Font = new Font("Segoe UI", 9F, FontStyle.Bold),
                 BackColor = Color.FromArgb(150, 150, 150),
                 ForeColor = Color.White,
@@ -239,8 +228,8 @@ namespace Everything_UpToDate
             btnSave = new Button
             {
                 Text = "Kaydet",
-                Location = new Point(360, yPos),
-                Size = new Size(100, 35),
+                Location = new Point(355, yPos),
+                Size = new Size(95, 32),
                 Font = new Font("Segoe UI", 9F, FontStyle.Bold),
                 BackColor = Color.FromArgb(0, 158, 115),
                 ForeColor = Color.White,
@@ -257,7 +246,6 @@ namespace Everything_UpToDate
             // Paket yöneticileri
             chkWinGet.Checked = _updateService.IsSourceEnabled(PackageSource.WinGet);
             chkChocolatey.Checked = _updateService.IsSourceEnabled(PackageSource.Chocolatey);
-            chkMicrosoftStore.Checked = _updateService.IsSourceEnabled(PackageSource.MicrosoftStore);
 
             // Bildirimler
             chkShowNotifications.Checked = settings.ShowNotifications;
@@ -277,7 +265,6 @@ namespace Everything_UpToDate
             // Paket yöneticileri
             _updateService.SetSourceEnabled(PackageSource.WinGet, chkWinGet.Checked);
             _updateService.SetSourceEnabled(PackageSource.Chocolatey, chkChocolatey.Checked);
-            _updateService.SetSourceEnabled(PackageSource.MicrosoftStore, chkMicrosoftStore.Checked);
 
             // Bildirimler
             _settingsService.UpdateSetting("ShowNotifications", chkShowNotifications.Checked);

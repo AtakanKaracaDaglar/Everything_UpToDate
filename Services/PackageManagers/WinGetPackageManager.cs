@@ -159,12 +159,14 @@ namespace Everything_UpToDate.Services.PackageManagers
                             UseShellExecute = false,
                             RedirectStandardOutput = true,
                             RedirectStandardError = true,
-                            CreateNoWindow = true
+                            CreateNoWindow = true,
+                            StandardOutputEncoding = System.Text.Encoding.UTF8
                         }
                     };
 
                     // Output handler - gerçek zamanlý log
                     var outputBuilder = new System.Text.StringBuilder();
+                    var errorBuilder = new System.Text.StringBuilder();
                     int lastProgress = 5;
                     
                     process.OutputDataReceived += (sender, e) =>
@@ -172,16 +174,16 @@ namespace Everything_UpToDate.Services.PackageManagers
                         if (!string.IsNullOrEmpty(e.Data))
                         {
                             outputBuilder.AppendLine(e.Data);
-                            var line = e.Data.Trim();
+                            Debug.WriteLine($"[WinGet] {e.Data}");
                             
                             // Loading animasyonunu atla (-\|/)
+                            var line = e.Data.Trim();
                             if (line.Length == 1 && (line == "-" || line == "\\" || line == "|" || line == "/"))
                             {
                                 return; // Gereksiz log yazmayalým
                             }
                             
-                            Debug.WriteLine($"[WinGet] {line}");
-                            
+                            // Boyut ve yüzde bilgilerini parse et
                             UpdateStatus status = UpdateStatus.Downloading;
                             int progressPercent = lastProgress;
                             string displayMessage = line;
@@ -193,29 +195,23 @@ namespace Everything_UpToDate.Services.PackageManagers
                                 progressPercent = 20;
                                 displayMessage = "Ýndiriliyor...";
                             }
-                            // Progress bar veya boyut bilgisi varsa
-                            else if (line.Contains("?") || line.Contains("KB") || line.Contains("MB") || line.Contains("GB"))
+                            // Progress bar varsa (???? gibi)
+                            else if (line.Contains("?") || line.Contains("?"))
                             {
                                 status = UpdateStatus.Downloading;
                                 
-                                // "548 KB / 548 KB" formatýný yakala
-                                var sizeMatch = System.Text.RegularExpressions.Regex.Match(line, @"(\d+\.?\d*)\s*(KB|MB|GB)\s*/\s*(\d+\.?\d*)\s*(KB|MB|GB)");
+                                // "50.5 MB / 100 MB" formatýný yakala
+                                var sizeMatch = System.Text.RegularExpressions.Regex.Match(line, @"(\d+\.?\d*)\s*(MB|GB|KB)\s*/\s*(\d+\.?\d*)\s*(MB|GB|KB)");
                                 if (sizeMatch.Success)
                                 {
                                     double current = double.Parse(sizeMatch.Groups[1].Value);
-                                    string currentUnit = sizeMatch.Groups[2].Value;
                                     double total = double.Parse(sizeMatch.Groups[3].Value);
-                                    string totalUnit = sizeMatch.Groups[4].Value;
-                                    
-                                    // Progress hesapla
                                     progressPercent = Math.Min((int)((current / total) * 70) + 20, 90); // 20-90 arasý
                                     
-                                    displayMessage = $"Ýndiriliyor: {current:F1} {currentUnit} / {total:F1} {totalUnit}";
+                                    displayMessage = $"Ýndiriliyor: {current:F1} {sizeMatch.Groups[2].Value} / {total:F1} {sizeMatch.Groups[4].Value}";
                                 }
                                 else
                                 {
-                                    // Boyut bulunamadý ama progress var
-                                    displayMessage = "Ýndiriliyor...";
                                     progressPercent = 50;
                                 }
                             }
@@ -241,7 +237,7 @@ namespace Everything_UpToDate.Services.PackageManagers
                                 displayMessage = line;
                             }
                             
-                            lastProgress = progressPercent;
+                            lastProgress = Math.Max(lastProgress, progressPercent);
                             
                             // Progress güncelle
                             progress?.Report(new UpdateProgress
@@ -249,7 +245,7 @@ namespace Everything_UpToDate.Services.PackageManagers
                                 ApplicationName = app.Name,
                                 Status = status,
                                 Message = displayMessage,
-                                ProgressPercentage = progressPercent
+                                ProgressPercentage = Math.Min(lastProgress, 99)
                             });
                         }
                     };
@@ -258,14 +254,8 @@ namespace Everything_UpToDate.Services.PackageManagers
                     {
                         if (!string.IsNullOrEmpty(e.Data))
                         {
+                            errorBuilder.AppendLine(e.Data);
                             Debug.WriteLine($"[WinGet ERROR] {e.Data}");
-                            progress?.Report(new UpdateProgress
-                            {
-                                ApplicationName = app.Name,
-                                Status = UpdateStatus.Failed,
-                                Message = $"Hata: {e.Data}",
-                                ProgressPercentage = lastProgress
-                            });
                         }
                     };
 
@@ -274,7 +264,76 @@ namespace Everything_UpToDate.Services.PackageManagers
                     process.BeginErrorReadLine();
                     process.WaitForExit();
 
+                    // Exit code kontrolü - WinGet için 0 = baþarýlý
                     bool success = process.ExitCode == 0;
+                    string fullOutput = outputBuilder.ToString();
+                    string fullError = errorBuilder.ToString();
+
+                    // Success indications (WinGet baþarýlý göstergeleri)
+                    bool hasSuccessIndicator = fullOutput.Contains("Successfully") ||
+                                              fullOutput.Contains("Baþarýyla") ||
+                                              fullOutput.Contains("installed");
+
+                    // Failure indicators (Baþarýsýz göstergeleri)
+                    bool hasFailureIndicator = fullOutput.Contains("The package cannot be upgraded") ||
+                                              fullOutput.Contains("No applicable upgrade found") ||
+                                              fullOutput.Contains("does not apply to your system") ||
+                                              fullOutput.Contains("Permission denied") ||
+                                              fullOutput.Contains("Access denied") ||
+                                              fullOutput.Contains("Access is denied");
+
+                    // Hata kodu negatifse sistem hatasý - output'a bak
+                    if (process.ExitCode < 0 || process.ExitCode > 0)
+                    {
+                        Debug.WriteLine($"WinGet exit code: {process.ExitCode}");
+                        Debug.WriteLine($"Output: {fullOutput}");
+                        Debug.WriteLine($"Error: {fullError}");
+
+                        // Eðer output'ta baþarý göstergesi varsa baþarýlý say
+                        if (hasSuccessIndicator && !hasFailureIndicator)
+                        {
+                            success = true;
+                        }
+                        else if (hasFailureIndicator)
+                        {
+                            success = false;
+                        }
+                    }
+
+                    // Fallback: Açýk baþarý veya baþarýsýzlýk kontrolü
+                    if (!success && hasSuccessIndicator && !hasFailureIndicator)
+                    {
+                        success = true;
+                    }
+                    else if (success && hasFailureIndicator)
+                    {
+                        success = false;
+                    }
+
+                    Debug.WriteLine($"WinGet final result: {(success ? "SUCCESS" : "FAILED")}");
+                    Debug.WriteLine($"Output length: {fullOutput.Length} chars");
+
+                    // Process'in gerçekten bitmesini bekle (timeout: 60 saniye)
+                    if (!process.HasExited)
+                    {
+                        Debug.WriteLine("WinGet process hala çalýþýyor, 60 saniye daha bekliyoruz...");
+                        process.WaitForExit(60000);
+                    }
+
+                    // Process'i kapat
+                    try
+                    {
+                        process.Close();
+                        process.Dispose();
+                    }
+                    catch { }
+
+                    // Baþarýlý ise biraz daha bekle (kurulum tamamlanmasý için)
+                    if (success)
+                    {
+                        Debug.WriteLine("Kurulum tamamlanmasý için 5 saniye bekliyoruz...");
+                        System.Threading.Thread.Sleep(5000);
+                    }
 
                     progress?.Report(new UpdateProgress
                     {
@@ -294,6 +353,7 @@ namespace Everything_UpToDate.Services.PackageManagers
                 }
                 catch (Exception ex)
                 {
+                    Debug.WriteLine($"WinGet update error: {ex.Message}");
                     progress?.Report(new UpdateProgress
                     {
                         ApplicationName = app.Name,
