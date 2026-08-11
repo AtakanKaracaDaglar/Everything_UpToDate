@@ -392,6 +392,10 @@ namespace Everything_UpToDate
 
             foreach (var app in appsToShow)
             {
+                // Sadece WinGet ve Chocolatey göster
+                if (app.SourceName != "WinGet" && app.SourceName != "Chocolatey")
+                    continue;
+
                 var item = new ListViewItem(app.Name);
                 item.SubItems.Add(app.CurrentVersion);
                 item.SubItems.Add(app.LatestVersion);

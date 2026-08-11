@@ -25,9 +25,10 @@ namespace Everything_UpToDate.Services
             _enabledSources = new Dictionary<PackageSource, bool>
             {
                 { PackageSource.WinGet, true },
-                { PackageSource.Chocolatey, false },
-                { PackageSource.MicrosoftStore, false },
-                { PackageSource.Steam, false }
+                { PackageSource.Chocolatey, false }
+                // MicrosoftStore kaldýrýldý
+                // { PackageSource.MicrosoftStore, false },
+                // { PackageSource.Steam, false }
             };
             
             InitializePackageManagers();
@@ -41,8 +42,7 @@ namespace Everything_UpToDate.Services
             // Chocolatey'i ekle
             _packageManagers.Add(new PackageManagers.ChocolateyPackageManager());
             
-            // Microsoft Store'u ekle
-            _packageManagers.Add(new PackageManagers.MicrosoftStorePackageManager());
+            // Microsoft Store kaldýrýldý
             
             // Steam - gelecekte eklenecek
             // _packageManagers.Add(new SteamPackageManager());
@@ -126,7 +126,7 @@ namespace Everything_UpToDate.Services
             // Name bazlý source belirleme
             if (manager.Name == "WinGet") return PackageSource.WinGet;
             if (manager.Name == "Chocolatey") return PackageSource.Chocolatey;
-            if (manager.Name == "Microsoft Store") return PackageSource.MicrosoftStore;
+            // Microsoft Store kaldýrýldý
             if (manager.Name == "Steam") return PackageSource.Steam;
             return PackageSource.Unknown;
         }

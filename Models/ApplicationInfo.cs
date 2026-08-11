@@ -31,8 +31,6 @@ namespace Everything_UpToDate.Models
                         return "WinGet";
                     case PackageSource.Chocolatey:
                         return "Chocolatey";
-                    case PackageSource.MicrosoftStore:
-                        return "Microsoft Store";
                     case PackageSource.Steam:
                         return "Steam";
                     default:

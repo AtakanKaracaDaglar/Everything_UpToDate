@@ -136,46 +136,161 @@ namespace Everything_UpToDate.Services.PackageManagers
                         ApplicationName = app.Name,
                         Status = UpdateStatus.Downloading,
                         Message = "Chocolatey güncelleme baþlatýlýyor...",
-                        ProgressPercentage = 10
+                        ProgressPercentage = 5
                     });
 
-                    var process = new Process
+                    var upgradeProcess = new Process
                     {
                         StartInfo = new ProcessStartInfo
                         {
                             FileName = "choco",
-                            Arguments = $"upgrade {app.Id} -y",
+                            Arguments = $"upgrade {app.Id} -y --force --no-progress",
                             UseShellExecute = false,
                             RedirectStandardOutput = true,
                             RedirectStandardError = true,
-                            CreateNoWindow = true
+                            CreateNoWindow = true,
+                            StandardOutputEncoding = System.Text.Encoding.UTF8
                         }
                     };
 
-                    process.Start();
+                    upgradeProcess.Start();
+                    var outputBuilder = new System.Text.StringBuilder();
+                    var errorBuilder = new System.Text.StringBuilder();
+                    int lastProgress = 20;
 
-                    int progressValue = 20;
-                    while (!process.HasExited && progressValue < 90)
+                    upgradeProcess.OutputDataReceived += (sender, e) =>
                     {
-                        System.Threading.Thread.Sleep(1000);
-                        progressValue += 10;
-                        progress?.Report(new UpdateProgress
+                        if (!string.IsNullOrEmpty(e.Data))
                         {
-                            ApplicationName = app.Name,
-                            Status = UpdateStatus.Installing,
-                            Message = "Yükleniyor...",
-                            ProgressPercentage = Math.Min(progressValue, 90)
-                        });
+                            outputBuilder.AppendLine(e.Data);
+                            var line = e.Data.Trim();
+
+                            Debug.WriteLine($"[Choco Upgrade] {e.Data}");
+
+                            // Progress güncelle
+                            UpdateStatus status = UpdateStatus.Installing;
+                            int progressPercent = lastProgress;
+                            string displayMessage = line;
+
+                            if (line.Contains("Downloading") || line.Contains("Downloading package"))
+                            {
+                                status = UpdateStatus.Downloading;
+                                progressPercent = 40;
+                                displayMessage = "Ýndiriliyor...";
+                            }
+                            else if (line.Contains("Installing") || line.Contains("Installed"))
+                            {
+                                status = UpdateStatus.Installing;
+                                progressPercent = 80;
+                                displayMessage = "Yükleniyor...";
+                            }
+                            else if (line.Contains("completed successfully") || line.Contains("tamamlandý"))
+                            {
+                                status = UpdateStatus.Installing;
+                                progressPercent = 95;
+                                displayMessage = "Yükleme tamamlanýyor...";
+                            }
+
+                            lastProgress = Math.Max(lastProgress, progressPercent);
+
+                            progress?.Report(new UpdateProgress
+                            {
+                                ApplicationName = app.Name,
+                                Status = status,
+                                Message = displayMessage,
+                                ProgressPercentage = Math.Min(lastProgress, 99)
+                            });
+                        }
+                    };
+
+                    upgradeProcess.ErrorDataReceived += (sender, e) =>
+                    {
+                        if (!string.IsNullOrEmpty(e.Data))
+                        {
+                            errorBuilder.AppendLine(e.Data);
+                            Debug.WriteLine($"[Choco Error] {e.Data}");
+                        }
+                    };
+
+                    upgradeProcess.BeginOutputReadLine();
+                    upgradeProcess.BeginErrorReadLine();
+                    upgradeProcess.WaitForExit();
+
+                    bool success = upgradeProcess.ExitCode == 0;
+                    string fullOutput = outputBuilder.ToString();
+                    string fullError = errorBuilder.ToString();
+
+                    // Success indications (Chocolatey baþarýlý olmuþ göstergeleri)
+                    bool hasSuccessIndicator = fullOutput.Contains("Upgrade of ") ||
+                                               fullOutput.Contains("installed") ||
+                                               fullOutput.Contains("successfully");
+
+                    // Failure indicators (Baþarýsýz olmuþ göstergeleri)
+                    bool hasFailureIndicator = fullOutput.Contains("No applicable upgrade found") ||
+                                               fullOutput.Contains("cannot be upgraded") ||
+                                               fullOutput.Contains("does not apply to your system") ||
+                                               fullOutput.Contains("Exit code of") ||
+                                               fullOutput.Contains("Permission denied") ||
+                                               fullOutput.Contains("Access is denied");
+
+                    // Hata kodu negatifse sistem hatasý
+                    if (upgradeProcess.ExitCode < 0)
+                    {
+                        Debug.WriteLine($"Chocolatey negative exit code detected: {upgradeProcess.ExitCode}");
+                        Debug.WriteLine($"Output: {fullOutput}");
+                        Debug.WriteLine($"Error: {fullError}");
+
+                        // Eðer output'ta baþarý göstergesi varsa baþarýlý say
+                        if (hasSuccessIndicator)
+                        {
+                            success = true;
+                        }
+                        else if (hasFailureIndicator)
+                        {
+                            success = false;
+                        }
                     }
 
-                    process.WaitForExit();
-                    bool success = process.ExitCode == 0;
+                    // Fallback: Açýk baþarý veya baþarýsýzlýk kontrolü
+                    if (!success && hasSuccessIndicator)
+                    {
+                        success = true;
+                    }
+                    else if (success && hasFailureIndicator)
+                    {
+                        success = false;
+                    }
+
+                    Debug.WriteLine($"Chocolatey final result: {(success ? "SUCCESS" : "FAILED")}");
+                    Debug.WriteLine($"Output length: {fullOutput.Length} chars");
+
+                    // Process'in gerçekten bitmesini bekle (timeout: 60 saniye)
+                    if (!upgradeProcess.HasExited)
+                    {
+                        Debug.WriteLine("Process hala çalýþýyor, 60 saniye daha bekliyoruz...");
+                        upgradeProcess.WaitForExit(60000);
+                    }
+
+                    // Process'i kapat
+                    try
+                    {
+                        upgradeProcess.Close();
+                        upgradeProcess.Dispose();
+                    }
+                    catch { }
+
+                    // Baþarýlý ise biraz daha bekle (kurulum tamamlanmasý için)
+                    if (success)
+                    {
+                        Debug.WriteLine("Kurulum tamamlanmasý için 5 saniye bekliyoruz...");
+                        System.Threading.Thread.Sleep(5000);
+                    }
 
                     progress?.Report(new UpdateProgress
                     {
                         ApplicationName = app.Name,
                         Status = success ? UpdateStatus.Completed : UpdateStatus.Failed,
-                        Message = success ? "Güncelleme tamamlandý" : "Güncelleme baþarýsýz",
+                        Message = success ? "? Güncelleme tamamlandý!" : $"? Güncelleme baþarýsýz",
                         ProgressPercentage = 100
                     });
 
@@ -189,6 +304,7 @@ namespace Everything_UpToDate.Services.PackageManagers
                 }
                 catch (Exception ex)
                 {
+                    Debug.WriteLine($"Chocolatey update error: {ex.Message}\n{ex.StackTrace}");
                     progress?.Report(new UpdateProgress
                     {
                         ApplicationName = app.Name,
